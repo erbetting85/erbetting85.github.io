@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#121418">
+<title>Sniper 0,5</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icona-192.png">
+<link rel="apple-touch-icon" href="icona-192.png">
+<style>
+  html, body { margin: 0; height: 100%; background: #121418; color: #f1f1ee;
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #121418; }
+  #fermo { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; padding: 24px 16px; box-sizing: border-box; text-align: center; }
+  #fermo img { width: 96px; height: 96px; border-radius: 22px; }
+  #fermo h1 { margin: 0; font-size: 22px; }
+  #fermo h1 b { color: #e3b84a; }
+  #fermo p { margin: 0; max-width: 420px; color: #b4b7bf; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<!-- Sniper 0,5: questa pagina e' pubblica ma non contiene niente di privato. L'indirizzo dell'app web e la chiave arrivano
+     una volta sola dal link di attivazione (la parte dopo il #, che il browser non manda a nessun server) e restano solo
+     su questo telefono. Senza attivazione mostra solo l'avviso qui sotto. -->
+<div id="fermo" hidden>
+  <img src="icona-192.png" alt="">
+  <h1>Sniper <b>0,5</b></h1>
+  <p>Questo telefono non è ancora collegato. Apri il sito una volta con il link lungo (il pulsante «APRI IL SITO» del foglio)
+    e tocca <b>Attiva l'app</b>.</p>
+</div>
+<script>
+(function () {
+  var CHIAVE = 'sniper05_app', FORMA = /^(AKfyc[\w-]{20,})\.([0-9a-f]{32})$/;
+  var dato = '';
+  var h = decodeURIComponent(location.hash.slice(1));
+  if (FORMA.test(h)) {
+    dato = h;
+    try { localStorage.setItem(CHIAVE, h); } catch (e) {}
+  }
+  if (location.hash) history.replaceState(null, '', location.pathname);  // la chiave non resta nella barra ne' nella cronologia
+  if (!dato) { try { dato = localStorage.getItem(CHIAVE) || ''; } catch (e) {} }
+  var m = FORMA.exec(dato);
+  if (!m) { document.getElementById('fermo').hidden = false; return; }
+  var f = document.createElement('iframe');
+  f.id = 'app'; f.title = 'Sniper 0,5'; f.referrerPolicy = 'no-referrer';
+  f.src = 'https://script.google.com/macros/s/' + m[1] + '/exec?chiave=' + m[2] + '&sito=1&app=1';
+  document.body.appendChild(f);
+})();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+</body>
+</html>

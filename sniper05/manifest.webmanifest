@@ -1,0 +1,18 @@
+{
+  "id": "/sniper05/",
+  "name": "Sniper 0,5",
+  "short_name": "Sniper 0,5",
+  "description": "Sniper 0,5: serie, partite e conti",
+  "lang": "it",
+  "start_url": "/sniper05/",
+  "scope": "/sniper05/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121418",
+  "theme_color": "#121418",
+  "icons": [
+    { "src": "icona-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icona-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
