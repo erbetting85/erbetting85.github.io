@@ -49,6 +49,9 @@
 <script>
 (function () {
   var NOME = 'sniper05_app', FORMA = /(AKfyc[\w-]{20,})\.([0-9a-f]{32})/;
+  // va bene anche il link lungo del sito (pulsante «APRI IL SITO»): .../macros/s/<id>/exec?chiave=<chiave>...
+  var LUNGO = /\/s\/(AKfyc[\w-]{20,})\/exec\?(?:[^#\s]*&)?chiave=([0-9a-f]{32})/;
+  function trova(t) { t = String(t || '').replace(/&amp;/g, '&'); return FORMA.exec(t) || LUNGO.exec(t); }
 
   function leggi() { try { return localStorage.getItem(NOME) || ''; } catch (e) { return ''; } }
   function salva(v) {
@@ -64,9 +67,11 @@
     document.body.appendChild(f);
   }
   function collega(testo) {
-    var m = FORMA.exec(testo || '');
+    var m = trova(testo);
     var esito = document.getElementById('esito');
-    if (!m) { esito.textContent = 'Codice non valido: ricopialo dal sito (Copia codice).'; return; }
+    var inizio = String(testo || '').trim().slice(0, 12);
+    if (!m) { esito.textContent = inizio ? 'Codice non valido: hai incollato un testo che inizia con «' + inizio + '…».'
+      : 'La casella è vuota: tieni premuto nella casella e scegli Incolla.'; return; }
     var ok = salva(m[1] + '.' + m[2]);
     if (!ok) esito.textContent = 'Collegato solo per adesso: questo telefono non lascia salvare il codice.';
     apri(m);
