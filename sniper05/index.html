@@ -48,10 +48,19 @@
 </div>
 <script>
 (function () {
-  var NOME = 'sniper05_app', FORMA = /(AKfyc[\w-]{20,})\.([0-9a-f]{32})/;
+  // 25/11/2026: link corto degli amici = .../sniper05/#<chiave di 10 lettere>. Questo e' l'indirizzo dell'app web del foglio:
+  // da solo non apre niente (senza una chiave valida il foglio risponde "Link non valido"). Se cambia il deployment del
+  // foglio (nuova distribuzione invece di "nuova versione") va cambiato anche qui.
+  var APP_ID = 'AKfycbz2-VSQtOiVpdzMvI0e8PNC81Yyimb_XzuwzVrRWE5vvFQeX_R3RO6bBJff2WnKCpMlfA';
+  var NOME = 'sniper05_app', FORMA = /(AKfyc[\w-]{20,})\.([0-9a-f]{32}|[a-km-np-z2-9]{10})(?![\w-])/;
+  var CORTA = /(?:^|#|\s)([a-km-np-z2-9]{10})(?=\s|$)/;
   // va bene anche il link lungo del sito (pulsante «APRI IL SITO»): .../macros/s/<id>/exec?chiave=<chiave>...
   var LUNGO = /\/s\/(AKfyc[\w-]{20,})\/exec\?(?:[^#\s]*&)?chiave=([0-9a-f]{32})/;
-  function trova(t) { t = String(t || '').replace(/&amp;/g, '&'); return FORMA.exec(t) || LUNGO.exec(t); }
+  function trova(t) {
+    t = String(t || '').trim().replace(/&amp;/g, '&');
+    var c = CORTA.exec(t);
+    return FORMA.exec(t) || LUNGO.exec(t) || (c ? [c[0], APP_ID, c[1]] : null);
+  }
 
   function leggi() { try { return localStorage.getItem(NOME) || ''; } catch (e) { return ''; } }
   function salva(v) {
@@ -80,7 +89,7 @@
   var h = '';
   try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
   if (location.hash) history.replaceState(null, '', location.pathname);  // il codice non resta nella barra ne' nella cronologia
-  var m = FORMA.exec(h);
+  var m = trova(h);
   if (m) { salva(m[1] + '.' + m[2]); return apri(m); }
   m = FORMA.exec(leggi());
   if (m) return apri(m);
